@@ -1,0 +1,9 @@
+.git
+.gitignore
+.circleci
+.trivyignore
+.snyk
+*.md
+charts/
+nginx-deployment/
+.DS_Store
