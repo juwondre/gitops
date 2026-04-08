@@ -36,12 +36,13 @@ commands:
           command: |
             KUBECONFORM_VERSION="v0.6.6"
             curl -sSL "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
-              | tar xz -C /usr/local/bin kubeconform
+              | sudo tar xz -C /usr/local/bin kubeconform
+            sudo chmod +x /usr/local/bin/kubeconform
 
       - run:
           name: Install helm
           command: |
-            curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+            curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | sudo bash
 
   compute-image-tag:
     description: Compute Docker image tag based on branch
@@ -88,9 +89,9 @@ jobs:
       - run:
           name: Lint Dockerfile (hadolint)
           command: |
-            curl -sSL https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 \
+            sudo curl -sSL https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64 \
               -o /usr/local/bin/hadolint
-            chmod +x /usr/local/bin/hadolint
+            sudo chmod +x /usr/local/bin/hadolint
             hadolint Dockerfile --failure-threshold warning || true
             hadolint Dockerfile --failure-threshold error
 
@@ -108,7 +109,8 @@ jobs:
       - run:
           name: YAML lint
           command: |
-            pip install yamllint
+            pip install --user yamllint
+            export PATH="$HOME/.local/bin:$PATH"
             yamllint -d "{extends: relaxed, rules: {line-length: {max: 200}}}" \
               nginx-deployment/ charts/helm/ nginx/
 
@@ -156,7 +158,8 @@ jobs:
           command: |
             TRIVY_VERSION="0.54.1"
             curl -sSL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" \
-              | tar xz -C /usr/local/bin trivy
+              | sudo tar xz -C /usr/local/bin trivy
+            sudo chmod +x /usr/local/bin/trivy
 
       - run:
           name: Load Docker image
@@ -221,8 +224,8 @@ jobs:
       - run:
           name: Install Snyk CLI
           command: |
-            curl -sSL https://static.snyk.io/cli/latest/snyk-linux -o /usr/local/bin/snyk
-            chmod +x /usr/local/bin/snyk
+            sudo curl -sSL https://static.snyk.io/cli/latest/snyk-linux -o /usr/local/bin/snyk
+            sudo chmod +x /usr/local/bin/snyk
 
       - run:
           name: Snyk container test
