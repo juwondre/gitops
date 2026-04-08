@@ -109,8 +109,8 @@ jobs:
       - run:
           name: YAML lint
           command: |
-            pip install --user yamllint
-            export PATH="$HOME/.local/bin:$PATH"
+            sudo apt-get update -qq
+            sudo apt-get install -y yamllint
             yamllint -d "{extends: relaxed, rules: {line-length: {max: 200}}}" \
               nginx-deployment/ charts/helm/ nginx/
 
